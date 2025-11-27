@@ -23,14 +23,24 @@
 
 #include <eichen_lib.h>
 
-double& readVoltage(const uint32_t& pin, const long& _min, const long& _max)
+long getMaxAnalogueValue(const uint32_t& res)
 {
-    analogReadResolution(12);
+    float temp = pow(2, res);
+    temp--;
+    long val = long(temp);
+    return (val);
+}
+
+double& readVoltage(const uint32_t& pin, const uint32_t& res, const double& maxvoltage)
+{
+    long maxanaloguevalue = getMaxAnalogueValue(res), maxvolt = long(maxvoltage);
     value = 0;
     actualVal = 0.0;
     sum = 0.0;
     avg = 0.0;
     valueAverage = 0.0;
+
+
 
     for(int i = 0; i < AVG; ++i)
     {
@@ -40,9 +50,8 @@ double& readVoltage(const uint32_t& pin, const long& _min, const long& _max)
     for(int i = 0; i < AVG; ++i)
     {
         value = analogRead(pin);
-        long temp = map(value, 0, 4095, 0, 3300);
-        long temp2 = map(temp, 0, 3300, _min, _max);
-        valueAverage = double (temp2);
+        long temp = map(value, 0, maxanaloguevalue, 0, maxvolt);
+        valueAverage = double (temp);
         average[i] = valueAverage;
     }
 
@@ -52,8 +61,24 @@ double& readVoltage(const uint32_t& pin, const long& _min, const long& _max)
     }
     avg = sum / double(AVG);
 
-
+    convToBase(&avg);
     return (avg);
+}
+
+
+double readVoltageDivider(const uint32_t& pin, const long& res, const long& _max, const long& r1, const long& r2, const float& offset)
+{
+    double value = 0.0, temp = readVoltage(pin, res, _max);
+
+    double vdivratio = (r1+r2) / 1000.0;
+
+    value = temp * vdivratio;
+
+    if(offset == 0.0)
+        return (value);
+
+    value += offset;
+    return (value);
 }
 
 void convToBase(double *_value)
@@ -87,16 +112,27 @@ int charToInt(const char& input)
 
 long getBatPer(const double& batVoltage, const double& minVoltage, const double& maxVoltage)
 {
-    long per = 0.0;
-    per = map(long(batVoltage), long(minVoltage), long(maxVoltage), 0, 100);
+    for (int i = 0; i < voltageTableSize - 1; i++)
+        {
+            float v1 = voltageTable[i * 2];
+            float p1 = voltageTable[i * 2 + 1];
+            float v2 = voltageTable[(i + 1) * 2];
+            float p2 = voltageTable[(i + 1) * 2 + 1];
 
-    per = constrain(per, 0, 100);
-    return (per);
+            if (batVoltage >= v2 && batVoltage <= v1)
+            {
+            // Linear interpolation between table points
+                float percentage = p1 + ((p2 - p1) * (batVoltage - v1) / (v2 - v1));
+                return (long)(percentage + 0.5); // Round to nearest integer
+            }
+        }
+
+    return 0; // Fallback
 }
 
 double convPWMtoVoltage(const uint32_t& pwmval, const uint32_t& pwmres, const float& volt)
 {
-    double maxpwmval = (pow(2, pwmres) - 1.0);      //maximum pwm value
+    double maxpwmval =  getMaxAnalogueValue(pwmres);      //maximum pwm value
 
     double convratio = (volt / maxpwmval);          //conversion ratio
 

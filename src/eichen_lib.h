@@ -19,7 +19,7 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
     USA
-*/////////////////////////////////////////////////////////////////////////////*/
+*/////////////////////////////////////////////////////////////////////////////*
 
 #ifndef __EICHEN__LIB__
 #define __EICHEN__LIB__
@@ -40,20 +40,99 @@
 //Attributes:
 
 //********************************PLEASE NOTE************************************
-//The objects below must be declared in main.cpp if the user intends to use the readVoltage() method:
+//The objects below must be declared in main.cpp if the user intends to use the readVoltage() or readVoltageDivider() method:
 extern double average[AVG], valueAverage, sum, avg, val, actualVal;
 extern uint32_t value;
 
 
 
+//Library constants
+const float voltageTable[] =        //to be upgraded for each battery type. current values for 4s LFP4 battery packs.
+{
+
+    14.40, 100.0,  // Full charge
+    14.20,  99.0,
+    13.60,  95.0,  // Bulk charging complete
+    13.40,  90.0,
+    13.32,  80.0,  // Flat region begins
+    13.30,  70.0,
+    13.28,  60.0,
+    13.26,  50.0,
+    13.24,  40.0,
+    13.20,  30.0,
+    13.16,  20.0,
+    13.12,  15.0,  // Flat region ends
+    13.00,  10.0,
+    12.80,   5.0,  // Nominal voltage (low capacity remaining)
+    12.00,   2.0,
+    11.20,   0.0   // Minimum safe voltage (2.8V per cell)
+
+};
+
+/*
+Other lookup tables:
+18650/21700 (3s):
+    12.60, 100.0,  // Full charge (4.20V per cell)
+    12.30,  95.0,
+    12.18,  90.0,
+    12.06,  80.0,
+    11.97,  70.0,
+    11.88,  60.0,
+    11.79,  50.0,
+    11.70,  40.0,
+    11.61,  30.0,
+    11.52,  20.0,
+    11.43,  15.0,
+    11.31,  10.0,
+    11.19,   5.0,
+    11.10,   2.0,  // Nominal voltage
+    9.00,   0.0   // Minimum safe voltage (3.00V per cell)
+
+18650/21700 (1s):
+     4.20, 100.0,
+    4.06,  95.0,
+    3.98,  90.0,
+    3.92,  85.0,
+    3.87,  80.0,
+    3.82,  75.0,
+    3.79,  70.0,
+    3.77,  65.0,
+    3.75,  60.0,
+    3.73,  55.0,
+    3.71,  50.0,
+    3.69,  45.0,
+    3.61,  40.0,
+    3.59,  35.0,
+    3.58,  30.0,
+    3.56,  25.0,
+    3.51,  20.0,
+    3.45,  15.0,
+    3.41,  10.0,
+    3.30,   5.0,
+    3.00,   0.0
+
+3.2V LFP4 (1s)
+
+
+
+
+*/
+
+const int voltageTableSize = sizeof(voltageTable) / sizeof(voltageTable[0]) / 2;
+
+
+
 //Methods:
-double& readVoltage(const uint32_t&, const long&, const long&);      //Method that measures an analogue voltage. Arguments: Pin, Minimum expected voltage value, Maximum expected voltage value.
+double& readVoltage(const uint32_t& pin, const uint32_t& res, const double& maxvoltage);      //Method that measures an analogue voltage. Arguments: Pin, Analogue read resolution, Maximum voltage of adc
+
+
+double readVoltageDivider(const uint32_t& pin, const long&res, const long& maxvoltage, const double r1, const double r2, const float& offset = 0.0); //Method that measures the analog output voltage at a voltage divider. Arguments: Pin, Analogue read resolution, ADC max voltage, R1, R2, and offset value.
 
 void convToBase(double*);        //Method that divides the argument passed by 1000.
 
 void convToMilli(double*);       //Method that multiplies the argument passed by 1000.
 
-long getBatPer(const double& batVoltage, const double& minVoltage, const double& maxVoltage);     //Method to calculate battery SoC based on voltage. Returns battery percentage as a long.
+long getBatPer(const double& batVoltage);     //Method to calculate battery SoC based on voltage. Returns battery percentage as a long.
 
 template <typename T>
     char intToChar(const T&);
@@ -63,6 +142,8 @@ int charToInt(const char&);
 double convPWMtoVoltage(const uint32_t& pwmval, const uint32_t& pwmres, const float& maxvoltage);
 
 long convVoltagetoPWM(const double& voltage, const double& minVoltage, const double& maxVoltage, const uint32_t pwmres);
+
+long getMaxAnalogueValue(const uint32_t& res);
 
 
 
