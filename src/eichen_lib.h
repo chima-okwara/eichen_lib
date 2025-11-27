@@ -1,11 +1,26 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//*FILE NAME:       eichen_lib.h
-//*FILE DESC:       Header file for eichen library.
-//*FILE VERSION:    0.7.1
-//*FILE AUTHOR:     Chimaroke Okwara (chima-okwara)
-//*LAST MODIFIED:   Wednesday, 26 November, 2025
-//*LICENSE:         GNU LGPL v2.1
-////////////////////////////////////////////////////////////////////////////////////////////////////
+/*/////////////////////////////////////////////////////////////////////////////////*
+    eichen_lib, A library designed for use with Arduino framework using PlatformIO IDE
+    Copyright (C) <2024>  <chima-okwara>
+    Email: cokwara82@protonmail.com
+           cokwara82@gmail.com
+    WhatsApp/Telegram:  +234-708-363-3859
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+    USA
+*/////////////////////////////////////////////////////////////////////////////*/
+
 #ifndef __EICHEN__LIB__
 #define __EICHEN__LIB__
 
