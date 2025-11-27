@@ -26,19 +26,19 @@
 
 //********************************PLEASE NOTE************************************
 //The objects below must be declared in main.cpp:
-extern float average[AVG], valueAverage, sum, avg, val, actualVal;
+extern double average[AVG], valueAverage, sum, avg, val, actualVal;
 extern uint32_t value;
 
 
 
 //Methods:
-float& readVoltage(const uint32_t&, const long&, const long&);      //Method that measures an analogue voltage. Arguments: Pin, Minimum expected voltage value, Maximum expected voltage value.
+double& readVoltage(const uint32_t&, const long&, const long&);      //Method that measures an analogue voltage. Arguments: Pin, Minimum expected voltage value, Maximum expected voltage value.
 
-void convToBase(float*);        //Method that divides the argument passed by 1000.
+void convToBase(double*);        //Method that divides the argument passed by 1000.
 
-void convToMilli(float*);       //Method that multiplies the argument passed by 1000.
+void convToMilli(double*);       //Method that multiplies the argument passed by 1000.
 
-long getBatPer(const float& batVoltage, const float& minVoltage, const float& maxVoltage);     //Method to calculate battery SoC based on voltage. Returns battery percentage as a long.
+long getBatPer(const double& batVoltage, const double& minVoltage, const double& maxVoltage);     //Method to calculate battery SoC based on voltage. Returns battery percentage as a long.
 
 template <typename T>
     char intToChar(const T&);
@@ -46,6 +46,9 @@ template <typename T>
 int charToInt(const char&);
 
 double convPWMtoVoltage(const uint32_t& pwmval, const uint32_t& pwmres, const float& maxvoltage);
+
+long convVoltagetoPWM(const double& voltage, const double& minVoltage, const double& maxVoltage, const uint32_t pwmres);
+
 
 
 //FUnction to convert milliseconds to hours or minutes..

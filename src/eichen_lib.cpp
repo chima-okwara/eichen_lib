@@ -9,7 +9,7 @@
 
 #include <eichen_lib.h>
 
-float& readVoltage(const uint32_t& pin, const long& _min, const long& _max)
+double& readVoltage(const uint32_t& pin, const long& _min, const long& _max)
 {
     analogReadResolution(12);
     value = 0;
@@ -28,7 +28,7 @@ float& readVoltage(const uint32_t& pin, const long& _min, const long& _max)
         value = analogRead(pin);
         long temp = map(value, 0, 4095, 0, 3300);
         long temp2 = map(temp, 0, 3300, _min, _max);
-        valueAverage = float (temp2);
+        valueAverage = double (temp2);
         average[i] = valueAverage;
     }
 
@@ -36,13 +36,13 @@ float& readVoltage(const uint32_t& pin, const long& _min, const long& _max)
     {
         sum = sum + average[i];
     }
-    avg = sum / float(AVG);
+    avg = sum / double(AVG);
 
 
     return (avg);
 }
 
-void convToBase(float *_value)
+void convToBase(double *_value)
 {
         val = 0.0;
         val = (*_value) / 1000.0;
@@ -50,7 +50,7 @@ void convToBase(float *_value)
 }
 
 
-void convToMilli(float* _value)
+void convToMilli(double* _value)
 {
     val = 0.0;
     val = (*_value) * 1000.0;
@@ -71,7 +71,7 @@ int charToInt(const char& input)
     return result;
 }
 
-long getBatPer(const float& batVoltage, const float& minVoltage, const float& maxVoltage)
+long getBatPer(const double& batVoltage, const double& minVoltage, const double& maxVoltage)
 {
     long per = 0.0;
     per = map(long(batVoltage), long(minVoltage), long(maxVoltage), 0, 100);
@@ -88,4 +88,18 @@ double convPWMtoVoltage(const uint32_t& pwmval, const uint32_t& pwmres, const fl
 
     double val = (float(pwmval) * convratio);
     return (val);
+}
+
+long convVoltagetoPWM(const double& voltage, const double& minvoltage, const double& maxvoltage, const uint32_t pwmres)
+{
+    double maxpwmval =(pow(2, pwmres) - 1.0);
+    double v = voltage, minV = minvoltage, maxV = maxvoltage;
+    convToMilli(&v);
+    convToMilli(&minV);
+    convToMilli(&maxV);
+
+    long vlong = long(v), minVLong = long(minV), maxVLong = long(maxV);
+
+    long pwmval = map(vlong, minVLong, maxVLong, 0, maxpwmval);
+    return (pwmval);
 }
