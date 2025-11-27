@@ -40,7 +40,7 @@
 //Attributes:
 
 //********************************PLEASE NOTE************************************
-//The objects below must be declared in main.cpp:
+//The objects below must be declared in main.cpp if the user intends to use the readVoltage() method:
 extern double average[AVG], valueAverage, sum, avg, val, actualVal;
 extern uint32_t value;
 
